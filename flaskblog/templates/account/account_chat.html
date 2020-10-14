@@ -1,0 +1,109 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+{% block body %}
+
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+  <div class="content-section">
+      <div class="media">
+      <img class="rounded-circle account-img" src="{{ img_file }}">
+      <div class="media-body">
+          <br><br>
+          <h3 class="account-heading">{{ user.username }}</h3>
+          <span class="text-secondary account-email"><small>{{ user.email }}</small></span><br>
+          {% if user in current_user.followings %}
+          <a href="/not_follow/{{ user.id }}" class="btn btn-sm btn-primary account-follow">Not To Follow</a>
+          {% else %}
+          <a href="/follow/{{ user.id }}" class="btn btn-sm btn-outline-primary account-follow">Follow him</a>          
+          {% endif %}
+      </div>
+      </div>
+  </div><br>
+  {% for message in messages.items %}
+  <div class="container content-box bg-light">
+    <div>
+      <a href="/{{ Account.query.get(message.sender_id).id }}/posts">
+        <img src="{{ url_for('static', filename='images/profile_img/' + Account.query.get(message.sender_id).img )  }}" class="blog-avart rounded-circle" >
+      </a>
+    </div>
+    <hr class="hr1">
+    <div>
+      <span class="content">{{ message.content }}</span>
+    </div><br>
+  </div><br>
+  {% endfor %}
+<button type="buttonn" class="btn btn-sm btn-secondary m-auto" data-toggle="modal" data-target="#sendmodal">Send Message</button>
+<div class="modal fade" id="sendmodal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Send Message</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="" class="">
+          {{ form.hidden_tag() }}
+          <fieldset class="form-group  p-10">
+            <div class="form-group m-auto p-0">
+              {% if form.content.errors %}
+                {{ form.content(class="form-control form-control-sm is-invalid m-auto",rows="20", placeholder="请输入正文") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.content.errors %}
+                          <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+              {% else %}
+                {{ form.content(class="form-control form-control message-content", placeholder="请输入正文") }}
+              {% endif %}
+            </div> 
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          &nbsp;&nbsp;
+          {{ form.submit(class="btn btn btn-sm btn-primary") }}
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deletemodal">Clear Messsage</button>
+<div class="modal fade" id="deletemodal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Clear Message</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        Are you sure to clear. The cleared message is not traceable.
+      </div>
+      <div class="modal-footer">
+        <a  href="/delete_message/{{ user.id }}"  class="btn btn-sm btn-outline-danger">Clear</a>
+        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+  <ul class="pagination pagination-sm justify-content-center">
+    {% for page_num in messages.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if messages.page==page_num %}
+        <li class="page-item active"><a class="page-link" href="{{ url_for('current.account_messages', user=user.username, page=page_num) }}">{{ page_num }}</a></li>
+      {% elif page_num %}
+        <li class="page-item"><a class="page-link" href="{{ url_for('current.account_messages', user=user.username, page=page_num) }}">{{ page_num }}</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="#">...</a></li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+</div><br><br>
+{% endblock %}

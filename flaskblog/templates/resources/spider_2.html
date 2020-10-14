@@ -1,0 +1,182 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+
+{% block body %}
+<div class="row">
+<div class="container bg-light">
+    <h1>爬虫系列课程（二）requests库的基本应用</h1>
+    <h2>目录</h2>
+    <ul>
+    <li><a href="#1">Python和requests库的安装</a></li>
+    <li><a href="#2">用requests发送请求</a></li>
+    <li><a href="#3">requests获取响应</a></li>
+    </ul>
+    <p>本节内容将助你掌握：</p>
+    <ul>
+    <li>用requests发送简单的 GET 请求和 POST 请求，大概了解参数的发送方法。</li>
+    <li>大概了解请求头的设置方法。</li>
+    <li>学会获取requests库的文本响应和字节码响应，同时懂得对响应的编码方式进行更改。</li>
+    </ul>
+    <p>话不多说，上车！</p>
+    <h2 id="1">Python和requests库的安装</h2>
+    <p>这节课我们就要正式接触爬虫的代码了，首先我们先去 Python 官网下载 Python3.8发行版：</p>
+    <p>进入下载页面：<a href='https://www.python.org/downloads/release/python-382/'>Python3.8发行版本</a></p>
+    <br><img src="{{ url_for('static', filename='images/spider/2.2.JPG') }}" style="width: 1000px;height: 400px;" class="spider"><br><br>
+    <p>根据你的系统类型选择下载</p>
+    <p>下载完成后按照引导解压安装就好了，需要注意的是如果不想自己配置环境变量可以再安装过程中勾选自动把Python加入环境变量中。</p>
+    <p>运行 Python 可以直接在命令行运行，但想进行一些代码调试之类的工作就需要一个集成开发环境：IDE。我选择的是 VScode，因为它轻量级，扩展好，功能全，当然你也可以选择久负盛名的 Pycharm 和偏向编辑器的 Sublime Text。</p>
+    <p>接着我们安装需要的库，我的习惯是在虚拟环境中工作（关于虚拟环境，如果大家不了解可以看我的另一篇关于虚拟环境配置的文章）。</p>
+    <p>在控制命令行中输入 pip install 安装需要的库，pip list 可以查看所有已经安装的Python库。</p>
+    <br><img src="{{ url_for('static', filename='images/spider/2.1.JPG') }}" style="width: 800px;height: 400px;"  class="spider"><br><br>
+    <p>安装虚拟环境</p>
+    <br><img src="{{ url_for('static', filename='images/spider/2.3.JPG') }}" style="width: 800px;height: 400px;"  class="spider"><br><br>
+    <p>创建并激活虚拟环境，并在其中安装 requests库。</p>
+    <p>最后一步就是在我们的IDE中将Python解释器的路径替换为我们虚拟环境中的scripts目录下的python.exe，我们已经完成所有的配置工作，接下来就可以上代码了。</p><br>
+    <h2 id="2">用requests发送请求</h2>
+    <p>talk is cheap, show you the code!</p>
+    <p>首先导入requests库：</p>
+    <pre><code class="python">
+import requests
+    </code></pre>
+    <p>发送我们的第一个请求</p>
+    <pre><code class="python">
+r = requests.get('http://www.baidu.com')
+    </code></pre>
+    <p>这是一个最简单的不带任何参数的 GET 请求，请求的URL是百度，如果我们想传入参数，可以以这样的方式传入参数：</p>
+    <pre><code class="python">
+payload = {'key1': 'value1', 'key2': 'value2'}
+r = requests.get('https://httpbin.org/get', params=payload)
+    </code></pre>
+    <p>发送 POST 请求：</p>
+    <pre><code class="python">
+r = requests.post('https://httpbin.org/post', data = {'key':'value'})
+    </code></pre>
+    <p>其他乱七八糟你暂时也用不到的请求：</p>
+    <pre><code class="python"class="python">
+r = requests.put('https://httpbin.org/put', data = {'key':'value'})
+r = requests.delete('https://httpbin.org/delete')
+r = requests.head('https://httpbin.org/get')
+r = requests.options('https://httpbin.org/get')
+    </code></pre>
+    <p>我携带的参数不仅可以是键值对，还可以是：</p>
+    <pre><code class="python">
+payload_tuples = [('key1', 'value1'), ('key1', 'value2')]
+r1 = requests.post('https://httpbin.org/post', data=payload_tuples)
+payload_dict = {'key1': ['value1', 'value2']}
+r2 = requests.post('https://httpbin.org/post', data=payload_dict)
+    </code></pre>
+    <p>我也可以用json：</p>
+    <pre><code class="python">
+url = 'https://api.github.com/some/endpoint'
+payload = {'some': 'data'}
+r = requests.post(url, json=payload)
+    </code></pre>
+    <p>上传文件？照样行：</p>
+    <pre><code class="python">
+url = 'https://httpbin.org/post'
+files = {'file': open('report.xls', 'rb')}
+r = requests.post(url, files=files)
+    </code></pre>
+    <p>携带 cookies 信息（关于cookies是什么我们后面会详细讲到，这里大家可以先理解为要访问一些特定网页所携带的参数）：</p>
+    <pre><code class="python">
+cookies = dict(cookies_are='working')
+r = requests.get('https://httpbin.org/cookies', cookies=cookies)
+    </code></pre>
+    <p>来看看更高级的操作：</p>
+    <pre><code class="python">
+jar = requests.cookies.RequestsCookieJar()
+jar.set('tasty_cookie', 'yum', domain='httpbin.org', path='/cookies')
+jar.set('gross_cookie', 'blech', domain='httpbin.org', path='/elsewhere')
+r = requests.get('https://httpbin.org/cookies', cookies=jar)
+    </code></pre>
+    <p>是不是觉得琳琅满目，不知所从？没关系，在第4节我会带大家进行第一次爬虫，大家就可以看到，对于初学者来说掌握如何发送 GET 请求和 POST 请求就可以进行初步爬虫了。至于一些复杂操作等大家练得多了，见得多了自然也就掌握了，不必拘泥于现在全部理解和吃透。</p><br>
+    <h2 id="3">requests获取响应</h2>
+    <p>学会发送请求之后，自然要学会怎么获取响应，本节我们不带大家解析响应内容，只是带掌握获取各种响应内容的方法。</p>
+    <p>大家还记得我们上节说的关于 request header 的内容吗，这节课我们会稍稍涉及到：</p>
+    <br><img src="{{ url_for('static', filename='images/spider/2.4.JPG') }}" style="width: 800px;height: 400px;"  class="spider"><br><br>
+    <img src="{{ url_for('static', filename='images/spider/2.5.JPG') }}" style="width: 800px;height: 400px;"  class="spider"><br><br>
+    <p>request header，也就是请求头，是封装我们请求的头部信息，这方面涉及到了我们底层的 HTTP 协议，涉及到了运输层的 TCP/UDP 协议和网络层的 IP 协议，要理解我们的request header是怎么作用的需要深刻理解计算机网络的传输与协议，如果大家对这些感兴趣我会再开一个专栏好好讲讲计算机网络协议。</p>
+    <p>我们先粗浅的理解一下：所谓请求头就是我们告诉服务器请求源的一些信息，例如：</p>
+    <ul>
+    <li>Accept: <em>/</em>(客户端能接收的资源类型)</li>
+    <li>Accept-Language: en-us(客户端接收的语言类型)</li>
+    <li>Host: localhost:8080(连接的目标主机和端口号)</li>
+    <li>Cookie(客户端暂存服务端的信息)</li>
+    <li>User-Agent: Mozilla/4.0(客户端版本号的名字)</li>
+    </ul>
+    <p>我们在进行浏览器请求时浏览器会帮助我们自动封装，而我们用 requests 库进行请求时我们需要自己配置我们的请求头，让我们的请求看起来是浏览器发出的‘正常’的请求。可是这么多参数我们都要加上吗？<strong>经验告诉我们，我们一般需要的是 User-Agent 参数，</strong>在我们发出请求时，加上：</p>
+    <pre><code class="python">
+headers = {'user-agent': 'User-Agent:Mozilla/5.0(Macintosh;U;IntelMacOSX10_6_8;en-us)AppleWebKit/534.50(KHTML,likeGecko)Version/5.1Safari/534.50
+    '}
+r = requests.get('www.baidu.com', headers=headers)
+    </code></pre>
+    <p>万事俱备，现在让我们看下怎么获取响应，首先让我们看下响应码：</p>
+    <pre><code class="python">
+&gt;&gt;&gt; r = requests.get('http://www.baidu.com')
+&gt;&gt;&gt; r.status_code
+200
+    </code></pre>
+    <p>200，很好，让我们来看下获取我们的响应头：</p>
+    <pre><code class="python">
+&gt;&gt;&gt; r.headers
+{'Cache-Control': 'private, no-cache, no-store, proxy-revalidate, no-transform', 'Connection': 'keep-alive', 'Content-Encoding': 'gzip', 'Content-Type': 'text/html', 'Date': 'Sun, 26 Apr 2020 14:10:07 GMT', 'Last-Modified': 'Mon, 23 Jan 2017 13:28:12 GMT', 'Pragma': 'no-cache', 'Server': 'bfe/1.0.8.18', 'Set-Cookie': 'BDORZ=27315; max-age=86400; domain=.baidu.com; path=/', 'Transfer-Encoding': 'chunked'}
+    </code></pre>
+    <p>如果我要获取响应的文本内容：</p>
+    <pre><code class="python">
+&gt;&gt;&gt; r.text
+'&lt;!DOCTYPE html&gt;\r\n&lt;!--STATUS OK--&gt;&lt;html&gt; &lt;head&gt;&lt;meta http-equiv=content-type content=text/html;charset=utf-8&gt;&lt;meta http-equiv=X-UA-Compatible content=IE=Edge&gt;&lt;meta content=always name=referrer&gt;&lt;link rel=stylesheet type=text/css href=http://s1.bdstatic.com/r/www/cache/bdorz/baidu.min.css&gt;&lt;title&gt;ç\x99¾åº¦ä¸\x80ä¸\x8bï¼\x8cä½\xa0å°±ç\x9f¥é\x81\x93&lt;/title&gt;&lt;/head&gt; &lt;body link=#0000cc&gt; &lt;div id=wrapper&gt; &lt;div id=head&gt; &lt;div class=head_wrapper&gt; ...
+    </code></pre>
+    <p>由于太长了，只给大家展示部分，显然我们获取到的是响应的HTML文件</p>
+    <p>如果我们想获取json内容：</p>
+    <pre><code class="python">
+&gt;&gt;&gt; r = requests.get('https://api.github.com/events')
+&gt;&gt;&gt; r.json()
+[{u'repository': {u'open_issues': 0, u'url': 'https://github.com/...
+    </code></pre>
+    <p>获取响应的 cookies 信息：</p>
+    <pre><code class="python">
+&gt;&gt;&gt; url = 'http://example.com/some/cookie/setting/url'
+&gt;&gt;&gt; r = requests.get(url)
+&gt;&gt;&gt; r.cookies['example_cookie_name']
+'example_cookie_value'
+    </code></pre>
+    <p>获取字节响应内容：</p>
+    <pre><code class="python">
+&gt;&gt;&gt; r.content
+b'&lt;!DOCTYPE html&gt;\r\n&lt;!--STATUS OK--&gt;&lt;html&gt; &lt;head&gt;&lt;meta http-equiv=content-type content=text/html;charset=utf-8&gt;&lt;meta http-equiv=X-UA-Compatible content=IE=Edge&gt;&lt;meta content=always name=referrer&gt;&lt;link rel=stylesheet type=text/css href=http://s1.bdstatic.com/r/www/cache/bdorz/baidu.min.css&gt;&lt;title&gt;\xe7\x99\xbe\xe5\xba\xa6\xe4\xb8\x80\xe4\xb8\x8b\xef\xbc\x8c\xe4\xbd\xa0\xe5\xb0\xb1\xe7\x9f\xa5\xe9\x81\x93&lt;/title&gt;&lt;/head&gt;...
+    </code></pre>
+    <p>获取并设置编码方式：</p>
+    <pre><code class="python">
+&gt;&gt;&gt; r.encoding = 'utf-8'
+    </code></pre>
+    <p>这么多响应内容，我们最常用的是哪些呢？<strong>如果我们爬取的是文字，数据方面的内容，我们用到r.text较多</strong>，在下节课我会教大家用正则表达式和 BeautifulSoup 解析我们获得的文本内容</p>
+    <p><strong>而如果我们爬取的是图片，我们要获取响应的字节码r.content</strong>，然后利用 Python 的其他库进行处理：</p>
+    <pre><code class="python">from PIL import Image
+from io import BytesIO
+i = Image.open(BytesIO(r.content))
+    </code></pre>
+    <p>如果我们要爬取的图片较大，可以利用响应的iter_content内容：</p>
+    <pre><code class="python">with open(filename, 'wb') as fd:
+    for chunk in r.iter_content(chunk_size=128):
+        fd.write(chunk)
+    </code></pre>
+    <p>iter_content 是类似生成器，我们每次存储的最多内容就是我们的 chunk_size 设置的值。</p>
+    <p>现在大家对requests库的使用用了初步的了解，在以后的学习中，我会像大家介绍requests代理，会话，cookies操作等方面的内容。如果大家觉得内容太多一下难以接受，可以自己码代码试验一下发出不同的请求以及获取不同的响应。</p>
+    <hr><br>
+    <p>推荐资料：</p>
+    <ul>
+    <li>计算机网络自顶向下方法</li>
+    <li><a href="https://2.python-requests.org/en/master/">requests官方文档</a></li>
+    </ul>
+    <hr><br>
+    <p>我们的爬虫系列课程第二节结束了，在下一节中我将带大家用正则表达式和 Python 的 BeautifulSoup 对响应的文本内容进行解析。如果你喜欢本系列课程，可以关注下方微信公众号，或者来我的博客：<a href="www.ivblog.tech">www.ivblog.tech </a>我会分享一些其他方面的文章。</p>
+</div>
+</div>
+</div>
+{% endblock %}

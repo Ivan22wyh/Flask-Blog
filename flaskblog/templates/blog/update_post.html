@@ -1,0 +1,55 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <form method="POST" action="" class="add-task">
+            {{ form.hidden_tag() }}
+                <fieldset class="form-group m-auto p-10">
+                    <legend class="boder-bottom m-auto">Update Post</legend>
+                    <div class="form-group my-4">
+                        {% if form.title.errors %}
+                            {{ form.title(class="form-control post-title px-10 m-auto form-control is-invalid", placeholder="请输入标题") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.title.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.title(class="form-control post-title form-control-sm p-10 m-auto", placeholder="请输入标题" ) }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group post-content m-auto">
+                        {% if form.content.errors %}
+                            {{ form.content(id="editor", class="form-control post-content form-control-sm is-invalid m-auto",rows="20", placeholder="请输入正文") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.content(id="editor", class="form-control post-content form-control-sm p-10 m-auto",rows='20', placeholder="请输入正文") }}
+                        {% endif %}
+                    </div> 
+                </fieldset><br><br>
+                <div class="form-group p-0 m-auto">
+                    {{ form.submit_update(class="btn btn btn-outline-info justify-content-center") }}
+                </div>
+            </form>
+          </div>
+        </div>
+</div>
+
+<br><br><br>
+
+{% endblock %}

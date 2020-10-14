@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Task Master</title>
+	<meta charset="utf-8">
+	<meta name="viewpoint" content="width=device-width, initial-scale=1.0" >
+	<meta http-quiv="X-UA-Campatible" content="ie=edge">
+	<link rel="stylesheet" href= "{{url_for('static', filename='css/bootstrap.min.css')}}">
+	<link rel="stylesheet" href= "{{url_for('static', filename='css/main.css')}}">
+	<link rel="stylesheet" href="../static/css/main.css">
+  <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}" ></script>
+	<script src="{{ url_for('static', filename='js/popper.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+	{% block head %}{% endblock %}
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm bg-dark 
+navbar-dark fixed-top">
+<a class="navbar-brand mb-2 mr-3 p-0 " href="/home">SYSU</a>
+<button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navb" aria-expanded="false">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navb">
+    <ul class="navbar-nav mb-1 mr-auto">
+      {% if title=='Home' %}
+        <li class="nav-item active">
+           <a class="nav-link" href="/home">Home</a>
+        </li>
+       {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/home">Home</a>
+        </li>
+       {% endif %}
+      {% if title=='Post' %}
+       <li class="nav-item active">
+          <a class="nav-link" href="/blog">Blog</a>
+       </li>
+      {% else %}
+       <li class="nav-item">
+         <a class="nav-link" href="/blog">Blog</a>
+       </li>
+      {% endif %}
+       <li class="nav-item dropdown ">
+           <a class="dropdown-toggle nav-link" 
+             id="navbardrop" data-toggle="dropdown">App</a>
+           <div class="dropdown-menu">
+               <a class="dropdown-item" href="/taskmaster">TaskMaster</a>
+               <a class="dropdown-item" href="/home">Coming soon...</a>
+               <a class="dropdown-item" href="/home">Coming soon...</a>
+           </div>
+       </li>
+      {% if title=='Article' %}
+       <li class="nav-item active">
+          <a class="nav-link" href="/article">Article</a>
+       </li>
+      {% else %}
+       <li class="nav-item">
+         <a class="nav-link" href="/article">Article</a>
+       </li>
+      {% endif %}
+    </ul>
+    <ul class="navbar-nav mb-1 justify-content-end">
+      {% if current_user.is_authenticated %}
+       {% if title=='Account' %}
+        <li class="nav-item active">
+           <a class="nav-link" href="/account">Account</a>
+        </li>
+       {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/account">Account</a>
+        </li>
+       {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Sign Out</a>
+        </li> 
+        {% else %}
+        {% if title=='Login' %}
+        <li class="nav-item active">
+           <a class="nav-link" href="/login">Sing In</a>
+        </li>
+       {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Sign In</a>
+        </li>
+       {% endif %}
+      {% if title=='Register' %}
+       <li class="nav-item active">
+          <a class="nav-link" href="/register">Register</a>
+       </li>
+      {% else %}
+       <li class="nav-item">
+         <a class="nav-link" href="/register">Register</a>
+       </li>
+      {% endif %}
+        {% endif %}
+      </ul>
+
+</div>
+</nav>
+<br><br><br>
+
+	{% block body %}{% endblock %}
+
+	
+</body>
+</html>

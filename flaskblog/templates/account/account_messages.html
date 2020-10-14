@@ -1,0 +1,43 @@
+{% extends 'Base_account.html'%}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+{% for user in users %}
+<div id="accordion">
+  <div class="card">
+    <div class="card-header">
+      <a href="/{{ Account.query.get(user).id }}/posts">
+          <img src="{{ url_for('static', filename='images/profile_img/'+Account.query.get(user).img) }}" 
+          class="blog-avart rounded-circle" >
+        </a>&nbsp;
+      <a class="card-link" data-toggle="collapse" href="{{'#' + Account.query.get(user).username }}">
+          <span class="content">{{ Account.query.get(user).username }}</span>
+      </a>
+    </div>
+    <div id="{{ Account.query.get(user).username }}" class="collapse" data-parent="#accordion">
+      <div class="card-body">
+          {% for message in (user|get_window_messages).items %}
+          <div class="container content-box bg-light">
+            <div>
+              <a href="/{{ Account.query.get(message.sender_id).id }}/posts">
+                <img src="{{ url_for('static', filename='images/profile_img/'+ Account.query.get(message.sender_id).img) }}" 
+                class="blog-avart rounded-circle" >
+              </a>
+            </div>
+            <hr class="hr1">
+            <div>
+              <span class="content">{{ message.content }}</span>
+            </div><br>
+          </div><br>
+          {% endfor %}
+          <a href="{{ url_for('current.account_messages', user=Account.query.get(user).username) }}" class="btn btn-sm btn-secondary m-auto">More</a>
+        </div>
+    </div>
+  </div>
+</div> 
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'Base_account.html'%}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<div class="jumbotron pl-6 pr-5 py-2 m-0 reg">
+  <form method="POST" action="" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+      <fieldset class="form-group m-10 p-10 ">
+        <legend class="boder-bottom mb-0">Account Info</legend>
+          <div class="form-group my-0">
+            {{ form.username.label(class="form-control-label p-0 m-0") }}
+              {% if form.username.errors %}
+                {{ form.username(class="form-control form-control-sm is-invalid") }}
+                  <div class="invalid-feedback">
+                    {% for error in form.username.errors %}
+                      <span>{{ error }}</span>
+                    {% endfor %}
+                  </div>
+              {% else %}
+                {{ form.username(class="form-control form-control-sm p-10 m-10") }}
+              {% endif %}
+            </div>
+          <div class="form-group my-0">
+            {{ form.email.label(class="form-control-label p-0 m-0") }}
+              {% if form.email.errors %}
+                {{ form.email(class="form-control form-control-sm is-invalid") }}
+                  <div class="invalid-feedback">
+                    {% for error in form.email.errors %}
+                      <span>{{ error }}</span>
+                    {% endfor %}
+                  </div>
+              {% else %}
+                {{ form.email(class="form-control form-control-sm p-10 m-10") }}
+              {% endif %}
+          </div><br>
+        <div class="form-group">
+          {{ form.image.label() }}
+          {{ form.image(class="form-control-file") }}
+          {% if form.image.errors %}
+            {% for error in form.image.errors %}
+              <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </fieldset>
+      <div class="form-group p-0 m-0">
+        {{ form.submit(class="btn btn-sm btn-outline-info ") }}
+      </div>
+    </form>
+    <div class="border-top pt-3">
+      <small class="text-muted">
+        Already have an account? <a class="ml2" href="{{ url_for('main.login') }}"> Sign in </a>
+      </small>
+  </div>
+</div>
+
+{% endblock %}

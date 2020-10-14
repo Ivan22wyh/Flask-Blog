@@ -1,0 +1,50 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-8">
+        <div class="container content-box bg-light">
+          <div>
+            <a class="title" href='/lagou'><span class="title"><b>
+              对全国Python岗位信息的数据爬取和可视化分析
+            </b></span></a>&nbsp;&nbsp;&nbsp;
+            <a href="/{{ account.id }}/posts" class="author">
+              <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+            </a>
+            <span class="account">{{ account.username }}</span>
+          </div>
+          <hr class="hr1">
+          <div>
+            <span class="content">
+              利用Python的requests 库进行lagou网python岗位信息数据爬取，采用多进程技术
+              和代理池技术进行高效爬取，并利用echarts进行python数据的可视化分析。
+            </span>
+          </div><br>
+        </div><br>、
+    </div>
+    <div class="col-md-4">
+      <div class="container bg-light">
+        <h4>Our SideBar</h4>
+        <span>
+          Sorry, the function of article part is building yet. We will try our best to
+          provide better experience and if you have any idea or want to be a sponser of
+          our website, please send email to &nbsp;<em><small>Ivan22wyh@outlook.com.</small></em>
+          &nbsp; Thank you for using our website.
+        </span>
+        <br><br>
+        <br><br>
+      </div>
+    </div>
+  </div>
+
+ 
+
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'Base_taskmaster.html'%}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<div class="container justify-content-center bg-light px-0">
+	<table class="task-table table table-bordered table-striped" >
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+          <div class="alert alert-dismissible fade show alert-{{ category }}">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ message }}
+          </div>
+      {% endfor %}
+    {% endif %}
+  	{% endwith %}
+		<thead class="table-dark">
+		  <tr>
+			<th>Task</th>
+			<th>Deadline</th>
+			<th>Priority</th>
+			<th>Actions</th>
+			<th>State</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  {% for task in tasks.items %}
+			<tr>
+				<td>{{ task.content }}</td>
+				<td>{{ task.deadline }}</td>
+				<td>
+					<b>{{ task.priority }}</b>
+				</td>		
+				<td>
+          <a href="#" data-toggle="modal" data-target="#deletemodal">Delete</a>
+          <div class="modal fade" id="deletemodal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Delete Post</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                  Are you sure to delete?
+                </div>
+                <div class="modal-footer">
+                  <a href="/taskmaster/delete/{{ task.id }}" class="btn btn-sm btn-danger">Delete</a>
+                  <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="/taskmaster/updatetask/{{ task.id }}" class="px-1 mx-1">Update</a>
+					<br>
+          <a href="/taskmaster/upgrade/{{ task.id }}">Upgrade</a>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="/taskmaster/downgrade/{{ task.id }}">Downgrade</a>
+				</td>
+				<td>
+					<a href="/taskmaster/finished/{{ task.id }}" class="state">Finished!</a>
+				</td>
+			</tr>
+		{% endfor %}		
+		</tbody>		
+	</table>
+</div>
+<ul class="pagination pagination-sm justify-content-center">
+	{% for page_num in tasks.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+	  {% if tasks.page==page_num %}
+		<li class="page-item active"><a class="page-link" href="{{ url_for('tasks.taskmaster', page=page_num) }}">{{ page_num }}</a></li>
+	  {% elif page_num %}
+		<li class="page-item"><a class="page-link" href="{{ url_for('tasks.taskmaster', page=page_num) }}">{{ page_num }}</a></li>
+	  {% else %}
+		<li class="page-item"><a class="page-link" href="#">...</a></li>
+	  {% endif %}
+	{% endfor %}
+  </ul>
+<br>
+<form action="/taskmaster" method="POST" class="add-task">
+	<input class="task-content my-1 py-1" type="text" name="content" id="content" placeholder="Add your task"><br>
+	<input class="task-deadline my-1 py-1" type="text" name="deadline" id="deadline" placeholder="Set your deadline, such as 2088-08-08"><br>
+	<input class='submit-task my-3' type="submit" value="Add Task">
+</form>
+<br> 
+<form action="/taskmaster/all" method="GET" class="all-task">
+	<input type="submit" value="See what I have done!">
+</form>
+<br><br><br>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+
+{% block body %}
+<div class="row">
+<div class="container bg-light">
+<h1>爬虫系列课程（四）爬取豆瓣电影排行榜</h1>
+<h2>目录</h2>
+<ul>
+<li><a href="#1">Fiddler软件的应用</a></li>
+<li><a href="#2">豆瓣电影爬取</a></li>
+</ul>
+<p>本节内容将助你掌握：</p>
+<ul>
+<li>fiddler软件的基本用法。</li>
+<li>简单爬虫程序的编写。</li>
+</ul>
+<p>话不多说，上车！</p>
+<h2 id="1">Fiddler软件的应用</h2>
+<p>在第一个爬虫软件的编写前，我先给大家介绍一个爬虫的抓包神器：Fiddler。Fidder会代理浏览器监听系统的Http网络数据流动，也可以让你检查所有的HTTP通讯，设置断点，以及记录Fiddle所有的“进出”的数据（我一般用来抓包）。我们在爬虫时可以用Fiddler 来查看为了获取内容发送的请求和这些请求的参数，再用爬虫程序配置和模拟发送这些请求。</p>
+<p>为了 Fiddler 软件能够成功代理，我们需要在 Chrome 中安装一个插件，如果大家已经掌握了科学上网的方法，可以直接在谷歌应用商店搜索 SwitchyOmega，安装。</p>
+<p>如果大家尚未掌握科学上网的方法，无妨，去下载一个谷歌访问助手就行了：</p>
+<p><a href="http://www.cnplugins.com/office/gugefangwenzhushou/">谷歌访问助手</a></p>
+<p>按照上面的教程下载，解压，集成到谷歌浏览器后，就可以访问谷歌应用商店了，下载需要的 Switchy Omega，如果大家对谷歌插件有兴趣可以看一下我另一篇关于谷歌插件分享和介绍的文章。</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.1.JPG') }}" style="width: 600px;height: 400px;" class="spider" ><br><br>
+<p>新建一个情景模式，按照图片上的配置信息填写，记下我们这里填的端口，接着就可以下载 Fidder 软件了。</p>
+<p><a href="https://www.telerik.com/fiddler">Fidder下载页面</a></p>
+<p>我们按照指引下载安装。打开软件之后，我们先做一下配置工作：打开 Tools &gt; Options &gt; Connections，填上我们 SwitchyOmega 填写的端口，并将四个选项的后三项打个勾</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.2.JPG') }}" style="width: 800px;height: 450px;" class="spider" ><br><br>
+<p>配置完成！我们来做个实验：</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.3.JPG ') }}" style="width: 600px;height: 400px;" class="spider" ><br><br>
+<p>打开我们的刚刚创建的 fiddler 情景模式，在 Fidder 的页面按 Ctrl x清楚所有的 session，用 Chrome 访问豆瓣电影排行榜：</p>
+<p><a href="https://movie.douban.com/top250?start=0&amp;filter=">豆瓣电影排行榜</a></p>
+<br><img src="{{ url_for('static', filename='images/spider/4.4.JPG ') }}" style="width: 900px;height: 500px;" class="spider" ><br><br>
+<p>在 Fidder 众多请求中找出我们需要模拟的请求（关于如何选中真正获取内容的请求，我没有特别好的方法教给大家，一般来说我们可以通过观察这些请求的url得出结论），可以看到右边有我们的请求以及响应的信息。</p>
+<p>点开 raw 页面可以看到请求的原始信息，可以看到这是一个 GET 请求，携带了一些 cookies 信息，一般来说我们需要获得的一个请求的基本信息都在这个页面。</p>
+<p>点开下方响应的 raw 页面可以看到响应的原始信息，不仅有一些类似 content-type 的参数，还有我们响应的 HTML 文件，我们寻找需要爬取的信息多半也在这里获取。</p>
+<p>万事俱备，让我们开启第一次的爬虫之旅！</p>
+<h2 id="2">豆瓣电影爬取</h2>
+<p>在刚才打开的页面中可以看到，一页有25部电影，整个榜单分为10页。我们难道要把每一页的网址都记录下来一个个发送请求吗？未必！</p>
+<p>在网页构建者写网页的时候，肯定不会把这个榜单每一页分配给一个完全不同的url，也就是说每一页的url应该是有一定的相似性的，我们可以在这方面下文章，先观察一下豆瓣电影排行榜url的特点：</p>
+<p>https://movie.douban.com/top250?start=0&amp;filter=</p>
+<p>有两个参数，filter是一个类似选择器的作用，应该暂时用不太到，start是什么意思呢？再看看下一页：</p>
+<p>https://movie.douban.com/top250?start=25&amp;filter=</p>
+<p>原来start参数是每一页起始的电影的排名，也就是序号，我们借这个规律可以用一个for循环来遍历所有的页码：</p>
+<pre><code class="python">
+if __name__ == '__main__':
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
+    for i in range(0, 250, 25):
+        url = &quot;https://movie.douban.com/top250?start={}&amp;filter=&quot;.format(i)
+        access_page(url)
+
+</code></pre>
+<p>access_page 是我们爬虫函数的方法，这样我们就做到利用for循环对每一个页码发送请求，下面在写爬虫方法之前，我们先想想具体需要什么信息，这个大家可以任意选取，我做的示范会包含一部电影的名称，导演，主演，分类，排名，分数和简介，让我们看看怎么获取这些信息。</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.5.JPG ') }}" style="width: 700px;height: 400px;" class="spider" ><br><br>
+<p>我们在排行榜单的界面看似好像可以得到很多需要的信息，用老方法，右键点击需要获取的信息，选择检查。</p>
+<p>大家可以再网页的源代码可以看到，这个排行榜单界面的数据有很多不如意的地方，比如：我们不需要这部电影分别在大陆，欧美，港台的名称；又比如，我们不希望导演，主演和分类放在一个标签里而不做区分。所以，我建议大家进入到每一部电影自己的页面来获取信息。</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.7.JPG ') }}" style="width: 600px;height: 400px;" class="spider" ><br><br>
+<p>可以看到这个页面的数据友善很多，于是我们决定从这个页面爬取信息，注意到这个页面并没有电影的简介和排名，获取简介和排名还得在排行榜中。那么我们要做的就是获取每一页中每一部电影的链接，简介和排名，下面看看怎么写这个函数：</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.8.JPG ') }}" style="width: 600px;height: 600px;" class="spider" ><br><br>
+<p>右键检查标题，发现它的链接在一个 class 值为 hd 的 div 模块中的 a 标签下，由于这个模块中没有第二个 a 标签，所以不需要一个 id 或者 class 作为身份标识。下面用同样的方法获取简介的位置。奉上代码：</p>
+<pre><code class="python">
+def access_page(url):
+    r = requests.get(url, headers=headers)
+    r.encoding = 'utf-8'
+    soup = BeautifulSoup(r.text, 'html.parser')
+    movies = soup.find('ol', class_='grid_view').find_all('li')
+    for movie in movies:
+        movie_rank = int(movie.find('div', class_='pic').find('em').get_text())
+        movie_url = movie.find('div', class_='hd').find('a').get('href')
+        try:
+            movie_intro = movie.find('span', class_='inq').get_text()
+        except:
+            movie_intro = '' 
+        access_movie(movie_url, movie_rank, movie_intro)
+
+</code></pre>
+<p>设置encoding是为了我们在获取信息的时候不会出现乱码，因为很多的网页编码并不是按照'utf-8'，如果不设置的话，尤其是中文，很容易爬取下来一堆乱码。</p>
+<p>在我自己写程序的时候发现一个问题，这250部里有一部电影是没有简介的，这会导致在执行 movie.find('span', class_='inq').get_text() 语句会报错，因为 None 值并不能进行 get_text() 的操作。所以我把他放在一个 try...expect... 的语句中，如果电影没有简介，就让它为空字符串。</p>
+<p>下面来看下爬取每一个电影单独页面的方法，access_movie 怎么写。</p>
+<p>对这一页的数据进行熟悉的‘检查’操作，电影名称，分数，导演都很容易获取。在主演和分类上有一点不同：</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.9.JPG ') }}" style="width: 700px;height: 400px;" class="spider" ><br><br>
+<p>每一个主演的名称都放在一个 a 标签下，这些 a 标签有一个相同的 rel 值 v：staring，由于篇幅原因，我们可能不希望把所有的主演名字都爬下来，这时可以采用一个限定循环次数的 for 循环，再把每一个主演的名字用/连接起来。</p>
+<pre><code class="python">
+movie_acts = soup.find_all('a', rel=&quot;v:starring&quot;)
+act_num = 0
+for act in movie_acts:
+    act_num += 1
+    if act_num &lt; 4:
+        movie_act += (act.get_text() + '/')
+    else:
+        break
+
+</code></pre>
+<p>分类的操作也是这样，下面我把这个函数完整的代码给大家：</p>
+<pre><code class="python">
+def access_movie(movie_url, movie_rank, movie_intro):
+    r = requests.get(movie_url, headers=headers)
+    r.encoding = 'utf-8'
+    soup = BeautifulSoup(r.text, 'html.parser') 
+    movie_name = soup.find('span', property=&quot;v:itemreviewed&quot;).get_text()
+    movie_drt = soup.find('a', rel=&quot;v:directedBy&quot;).get_text()
+    movie_act = ''
+    movie_acts = soup.find_all('a', rel=&quot;v:starring&quot;)
+    act_num = 0
+    for act in movie_acts:
+        act_num += 1
+        if act_num &lt; 4:
+            movie_act += (act.get_text() + '/')
+        else:
+            break
+    movie_index= ''
+    movie_indexes = soup.find_all('span', property=&quot;v:genre&quot;)
+    for index in movie_indexes:
+        movie_index += (index.get_text() + '/')
+    movie_score = float(soup.find('strong', class_=&quot;ll rating_num&quot;).get_text())
+    movie_img = soup.find('a', class_='nbgnbg').find('img').get('src')
+    print('正在爬取：{}|{}|{}|{}|{}|{}|{}'.format(movie_name, movie_drt, movie_act, movie_index, movie_score, movie_rank, movie_intro))
+
+</code></pre>
+<p>激动人心的时刻到了，运行我们搞定的第一个爬虫代码：</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.10.JPG ') }}" style="width: 500px;height: 230px;" class="spider" ><br><br>
+<p>不玩了……</p>
+<p>……</p>
+<p>虽然第一次出征就失败了，但是文章还是得写，我们先来好好看看这个错误的内容：简单来说，由于进行SSL认证失败，对向 requests 传递的url进行了过量的访问，HTTPS 连接池溢出。要搞懂这个错误从何而来，得先清楚 HTTPS 究竟是什么。</p>
+<p>相信大家对 http，https都有所耳闻，日常接触到的网址中，有些前面带着 http，有些带着 https，这二者有什么区别呢？HTTP 是互联网超文本传输协议(HyperText Transfer Protocal)，一个基于请求与响应模式的、无状态的、应用层的协议。常基于TCP的连接方式，绝大数的Web开发都是建立在 HTTP 协议之上的Web应用。简单来说就是一个基于应用层的通信规范，客户端的数据和服务器的数据怎么进行传输，以 HTTP 为规则。而 HTTP 的问题是它的通信是不加密的，在进行敏感信息传输的时候无疑是非常不安全的。基于这个我们开发出了 HTTPS (HyperText Transfer Protocol over SecureSocket Layer)对数据传输进行加密，HTTPS 为客户端和服务器增加构建一个由 SSL 认证的私有会话，SSL 会提供密钥负责验证和启动这个私有会话，以此来实现更安全地数据传输。我们在用浏览器发送请求的时候这个会话的搭建浏览器会帮我们完成这个过程，而在用 requests 发送请求的时候我们需要手动搭建这个过程，然而我们的代码并没有完成这个过程。</p>
+<p>现在来看看解决方法：</p>
+<ol>
+<li>
+<p>获取 SSL 证书信息，并在发送请求时用 requests.session() 坚持这个信息，关于 requests.session() 的做法我会在日后详述，我们先看看第二个方法。</p>
+</li>
+<li>
+<p>不让它验证不就完了呗</p>
+</li>
+</ol>
+<p>第二个方法只需要在请求时加上 verify=False：</p>
+<pre><code class="python">
+r = requests.get(url, headers=headers, verify=False)
+
+</code></pre>
+<p>我们不验证了，万一他要 FBI Warning，哦不对， InsecureRequestWarning 怎么办？</p>
+<pre><code class="python">
+requests.packages.urllib3.disable_warnings()
+
+</code></pre>
+<p>在请求前加上这句代码不让它报警就OK了。</p>
+<p>现在让我们再次运行我们的程序：</p>
+<br><img src="{{ url_for('static', filename='images/spider/4.11.JPG ') }}" style="width: 700px;height: 320px;" class="spider" ><br><br>
+<p>第一次爬虫圆满收工！</p>
+<hr>
+<p>推荐资料：</p>
+<ul>
+<li>UNIX网络编程</li>
+<li>TCP/IP协议详解</li>
+</ul>
+<hr>
+<p>我们的爬虫系列课程第四节结束了，在下一节中我将带大家进行爬虫第三步，将爬取的数据进行本地存储。如果你喜欢本系列课程，可以关注下方微信公众号，或者来我的博客：<a href="www.ivblog.tech">www.ivblog.tech </a>我会分享一些其他方面的文章。</p>
+</div>
+</div>
+</div>
+{% endblock %}

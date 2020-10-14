@@ -1,0 +1,37 @@
+{% extends 'Base_account.html'%}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+
+{% for post in posts.items %}
+  <div class="container content-box bg-light">
+    <div>
+      <a class="title" href="/post/{{ post.id }}"><span class="title"><b>{{ post.title }}</b></span></a>&nbsp;&nbsp;&nbsp;
+      <a href="/{{ post.account.id }}/posts" class="author">
+        <img src="{{ url_for('static', filename='images/profile_img/'+post.account.img) }}" class="blog-avart rounded-circle" >
+      </a>
+      <span class="account">{{ post.account.username }}</span>
+      <span class="text-muted date">&nbsp;&nbsp;&nbsp;<em>posted on {{ post.date_posted }}</em> </span>
+    </div>
+    <hr class="hr1">
+    <div>
+      <span class="content">{{ post.content|safe }}</span>
+    </div><br>
+  </div><br>
+{% endfor %}
+<ul class="pagination pagination-sm justify-content-center">
+  {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if posts.page==page_num %}
+      <li class="page-item active"><a class="page-link" href="{{ url_for('current.account_stars', page=page_num) }}">{{ page_num }}</a></li>
+    {% elif page_num %}
+      <li class="page-item"><a class="page-link" href="{{ url_for('current.account_stars', page=page_num) }}">{{ page_num }}</a></li>
+    {% else %}
+      <li class="page-item"><a class="page-link" href="#">...</a></li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+{% endblock %}

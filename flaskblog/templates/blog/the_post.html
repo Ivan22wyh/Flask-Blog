@@ -1,0 +1,87 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+
+{% block body %}
+
+<main role="main" class="container">
+  <div class="row">
+    <div class="col-md-8">
+        <div class="container content-box bg-light">
+          <div>
+            <a class="title" href='/post/{{ post.id }}'><span class="title"><b>{{ post.title }}</b></span></a>&nbsp;&nbsp;&nbsp;
+            <a href="/{{ post.account.id }}/posts" class="author">
+              <img src="{{ url_for('static', filename='images/profile_img/'+post.account.img) }}" class="blog-avart rounded-circle" >
+            </a>
+            <span class="account">{{ post.account.username }}</span>
+            <span class="text-muted date">&nbsp;&nbsp;&nbsp;<em>posted on {{ post.date_posted }}</em> </span>
+          </div>
+          <hr class="hr1">
+          <div>
+            <span class="content">{{ post.content|safe }}</span>
+          </div>
+          {% if post.account == current_user %}
+            <div>
+              <a class="btn btn-sm btn-secondary m-1" href="/updatepost/{{ post.id }}">Update</a>
+              <button type="buttonn" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deletemodal">Delete</button>
+              <div class="modal fade" id="deletemodal">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Delete Post</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                      Are you sure to delete?
+                    </div>
+                    <div class="modal-footer">
+                      <a href="/deletepost/{{ post.id }}" class="btn btn-sm btn-danger">Delete</a>
+                      <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% if post in current_user.stars %}
+              <a class="btn btn-sm btn-primary m-1" href="/unstarpost/{{ post.id }}">
+                <span class="glyphicon glyphicon-star-empty" id="btn_collect_icon" aria-hidden="true">Unstar</span>
+              </a>
+            {% else %}
+              <a class="btn btn-sm btn-outline-primary m-1" href="/starpost/{{ post.id }}">
+                <span class="glyphicon glyphicon-star-empty" id="btn_collect_icon" aria-hidden="true">Star It</span>
+              </a>            
+              {% endif %}
+            </div><br>
+          {% else %}
+          {% if post in current_user.stars %}
+          <div>
+            <a class="btn btn-sm btn-primary m-1" href="/unstarpost/{{ post.id }}">
+              <span class="glyphicon glyphicon-star-empty" id="btn_collect_icon" aria-hidden="true">Unstar</span>
+            </a>
+            <a class="btn btn-sm btn-outline-primary m-1" href="/sponsor">
+              <span class="glyphicon glyphicon-star-empty" id="btn_collect_icon" aria-hidden="true">Sponsor</span>
+            </a>
+          </div>
+            <br>
+          {% else %}
+          <div>
+            <a class="btn btn-sm btn-outline-primary m-1" href="/starpost/{{ post.id }}">
+              <span class="glyphicon glyphicon-star-empty" id="btn_collect_icon" aria-hidden="true">Star It</span>
+            </a>
+            <a class="btn btn-sm btn-outline-primary m-1" href="/sponsor">
+              <span class="glyphicon glyphicon-star-empty" id="btn_collect_icon" aria-hidden="true">Sponsor</span>
+            </a>
+          </div>
+            <br>
+            {% endif %}
+          {% endif %}
+        </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}

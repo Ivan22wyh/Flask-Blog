@@ -1,0 +1,158 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+
+{% block body %}
+
+  <div class="row">
+    <div class="col-md-8">
+        <div class="container content-box bg-light">
+          <div>
+            <a class="title" href='/lagou'><span class="title"><b>
+              对全国Python岗位信息的数据爬取和可视化分析
+            </b></span></a>&nbsp;&nbsp;&nbsp;
+            <a href="/{{ account.id }}/posts" class="author">
+              <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+            </a>
+            <span class="account">{{ account.username }}</span>
+          </div>
+          <hr class="hr1">
+          <div>
+            <span class="content">
+              利用Python的requests 库进行lagou网python岗位信息数据爬取，采用多进程技术
+              和代理池技术进行高效爬取，并利用echarts进行python数据的可视化分析。
+            </span>
+          </div><br>
+        </div><br>
+        <div class="container content-box bg-light">
+          <div>
+          <a class="title" href="{{ url_for('data.spider', chp=1) }}"><span class="title"><b>
+            爬虫系列课程（一）发送请求
+          </b></span></a>&nbsp;&nbsp;&nbsp;
+          <a href="/{{ account.id }}/posts" class="author">
+            <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+          </a>
+          <span class="account">{{ account.username }}</span>
+        </div>
+        <hr class="hr1">
+        <div>
+          <span class="content">
+            本系列课程旨在带领大家零基础学爬虫，对爬虫所需要的计算机网络知识形成基本的认知，掌握使用爬虫所需要的基本库与框架
+            。帮助大家能够自如地爬取自己需要的信息。
+          </span>
+        </div><br>
+      </div><br>
+        <div class="container content-box bg-light">
+          <div>
+            <a class="title" href="{{ url_for('data.spider', chp=2) }}"><span class="title"><b>
+              爬虫系列课程（二）requests库的基本应用
+            </b></span></a>&nbsp;&nbsp;&nbsp;
+            <a href="/{{ account.id }}/posts" class="author">
+              <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+            </a>
+            <span class="account">{{ account.username }}</span>
+          </div>
+          <hr class="hr1">
+          <div>
+            <span class="content">
+              本系列课程旨在带领大家零基础学爬虫，对爬虫所需要的计算机网络知识形成基本的认知，掌握使用爬虫所需要的基本库与框架
+              。帮助大家能够自如地爬取自己需要的信息。
+            </span>
+          </div><br>
+    </div><br>
+    <div class="container content-box bg-light">
+      <div>
+      <a class="title" href="{{ url_for('data.spider', chp=3) }}"><span class="title"><b>
+        爬虫系列课程（三）解析请求的文本内容
+      </b></span></a>&nbsp;&nbsp;&nbsp;
+      <a href="/{{ account.id }}/posts" class="author">
+        <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+      </a>
+      <span class="account">{{ account.username }}</span>
+    </div>
+    <hr class="hr1">
+    <div>
+      <span class="content">
+        本系列课程旨在带领大家零基础学爬虫，对爬虫所需要的计算机网络知识形成基本的认知，掌握使用爬虫所需要的基本库与框架
+        。帮助大家能够自如地爬取自己需要的信息。
+      </span>
+    </div><br>
+  </div><br>
+  <div class="container content-box bg-light">
+    <div>
+    <a class="title" href="{{ url_for('data.spider', chp=4) }}"><span class="title"><b>
+      爬虫系列课程（四）爬取豆瓣电影排行榜
+    </b></span></a>&nbsp;&nbsp;&nbsp;
+    <a href="/{{ account.id }}/posts" class="author">
+      <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+    </a>
+    <span class="account">{{ account.username }}</span>
+  </div>
+  <hr class="hr1">
+  <div>
+    <span class="content">
+      本系列课程旨在带领大家零基础学爬虫，对爬虫所需要的计算机网络知识形成基本的认知，掌握使用爬虫所需要的基本库与框架
+      。帮助大家能够自如地爬取自己需要的信息。
+    </span>
+  </div><br>
+</div><br>
+<div class="container content-box bg-light">
+  <div>
+  <a class="title" href="{{ url_for('data.spider', chp=5) }}"><span class="title"><b>
+    爬虫系列课程（五）爬取数据的本地存储
+  </b></span></a>&nbsp;&nbsp;&nbsp;
+  <a href="/{{ account.id }}/posts" class="author">
+    <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+  </a>
+  <span class="account">{{ account.username }}</span>
+</div>
+<hr class="hr1">
+<div>
+  <span class="content">
+    本系列课程旨在带领大家零基础学爬虫，对爬虫所需要的计算机网络知识形成基本的认知，掌握使用爬虫所需要的基本库与框架
+    。帮助大家能够自如地爬取自己需要的信息。
+  </span>
+</div><br>
+</div><br>
+<div class="container content-box bg-light">
+  <div>
+  <a class="title" href="{{ url_for('data.spider', chp=6) }}"><span class="title"><b>
+    爬虫系列课程（六）MySQL数据库存储爬虫内容
+  </b></span></a>&nbsp;&nbsp;&nbsp;
+  <a href="/{{ account.id }}/posts" class="author">
+    <img src="{{ url_for('static', filename='images/profile_img/'+account.img) }}" class="blog-avart rounded-circle" >
+  </a>
+  <span class="account">{{ account.username }}</span>
+</div>
+<hr class="hr1">
+<div>
+  <span class="content">
+    本系列课程旨在带领大家零基础学爬虫，对爬虫所需要的计算机网络知识形成基本的认知，掌握使用爬虫所需要的基本库与框架
+    。帮助大家能够自如地爬取自己需要的信息。
+  </span>
+</div><br>
+</div><br>
+    </div>
+    <div class="col-md-4">
+      <div class="container bg-light">
+        <h4>Our SideBar</h4>
+        <span>
+          Sorry, the function of article part is building yet. We will try our best to
+          provide better experience and if you have any idea or want to be a sponser of
+          our website, please send email to &nbsp;<em><small>Ivan22wyh@outlook.com.</small></em>
+          &nbsp; Thank you for using our website.
+        </span>
+        <br><br>
+        <br><br>
+      </div>
+    </div>
+  </div>
+
+ 
+
+{% endblock %}

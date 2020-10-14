@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewpoint" content="width=device-width, initial-scale=1.0" >
+	<meta http-quiv="X-UA-Campatible" content="ie=edge">
+	<link rel="stylesheet" href= "{{url_for('static', filename='css/bootstrap.min.css')}}">
+	<link rel="stylesheet" href="../static/css/main.css">
+  <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}" ></script>
+	<script src="{{ url_for('static', filename='js/popper.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+	{% if title %}
+    	<title>Blog - {{ title }}</title>
+	{% else %}
+    	<title>Blog</title>
+	{% endif %}
+    {% block head %}{% endblock %}
+    <style>
+        body {background: #F5F5F5 center top;
+      }
+    </style> 
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm bg-dark 
+navbar-dark fixed-top">
+<a class="navbar-brand mb-2 mr-3 p-0 " href="/home">SYSU</a>
+<button class="navbar-toggler navbar-toggler-right collapsed" type="button" data-toggle="collapse" data-target="#navb" aria-expanded="false">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navb">
+    <ul class="navbar-nav mb-1 mr-auto">
+      {% if title=='Home' %}
+        <li class="nav-item active">
+           <a class="nav-link" href="/home">Home</a>
+        </li>
+       {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/home">Home</a>
+        </li>
+       {% endif %}
+      {% if title=='Post' %}
+       <li class="nav-item active">
+          <a class="nav-link" href="/blog">Blog</a>
+       </li>
+      {% else %}
+       <li class="nav-item">
+         <a class="nav-link" href="/blog">Blog</a>
+       </li>
+      {% endif %}
+       <li class="nav-item dropdown ">
+           <a class="dropdown-toggle nav-link" 
+             id="navbardrop" data-toggle="dropdown">App</a>
+           <div class="dropdown-menu">
+               <a class="dropdown-item" href="/taskmaster">TaskMaster</a>
+               <a class="dropdown-item" href="/home">Coming soon...</a>
+               <a class="dropdown-item" href="/home">Coming soon...</a>
+           </div>
+       </li>
+      {% if title=='Article' %}
+       <li class="nav-item active">
+          <a class="nav-link" href="/article">Article</a>
+       </li>
+      {% else %}
+       <li class="nav-item">
+         <a class="nav-link" href="/article">Article</a>
+       </li>
+      {% endif %}
+    </ul>
+    <ul class="navbar-nav mb-1 justify-content-end">
+      {% if current_user.is_authenticated %}
+       {% if title=='Account' %}
+        <li class="nav-item active">
+           <a class="nav-link" href="/account">Account</a>
+        </li>
+       {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/account">Account</a>
+        </li>
+       {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Sign Out</a>
+        </li> 
+        {% else %}
+        {% if title=='Login' %}
+        <li class="nav-item active">
+           <a class="nav-link" href="/login">Sing In</a>
+        </li>
+       {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Sign In</a>
+        </li>
+       {% endif %}
+      {% if title=='Register' %}
+       <li class="nav-item active">
+          <a class="nav-link" href="/register">Register</a>
+       </li>
+      {% else %}
+       <li class="nav-item">
+         <a class="nav-link" href="/register">Register</a>
+       </li>
+      {% endif %}
+        {% endif %}
+      </ul>
+
+</div>
+</nav>
+<br><br><br>
+<main role="main" class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <div class="content-section">
+          <div class="media">
+            <img class="rounded-circle account-img" src="{{ img_file }}">
+            <div class="media-body">
+              <br><br>
+              <h3 class="my-account-heading">{{ current_user.username }}</h3>
+              <span class="text-secondary my-account-email"><small>{{ current_user.email }}</small></span>
+            </div>
+          </div>
+        </div><br>
+        <ul class="nav nav-tabs">
+          {% if subtitle=='Account' %}
+          <li class="nav-item">
+            <a class="nav-link account-nav active" href="/account">Profile</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link account-nav" href="/account">Profile</a>
+          </li>
+          {% endif %}
+          {% if subtitle=='Account_Post' %}
+          <li class="nav-item">
+            <a class="nav-link account-nav active" href="/account/posts">Post</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link account-nav" href="/account/posts">Post</a>
+          </li>
+          {% endif %}
+          {% if subtitle=='Account_Star' %}
+          <li class="nav-item">
+            <a class="nav-link account-nav active" href="/account/stars">Star</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link account-nav" href="/account/stars">Star</a>
+          </li>
+          {% endif %}
+          {% if subtitle=='Account_Following' %}
+          <li class="nav-item">
+            <a class="nav-link account-nav active" href="/account/following">Following</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link account-nav" href="/account/following">Following</a>
+          </li>
+          {% endif %}
+          {% if subtitle=='Account_Follower' %}
+          <li class="nav-item">
+            <a class="nav-link account-nav active" href="/account/followers">Follower</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link account-nav" href="/account/followers">Follower</a>
+          </li>
+          {% endif %}
+          {% if subtitle=='Account_Message' %}
+          <li class="nav-item">
+            <a class="nav-link account-nav active" href="/account/messages">Message</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link account-nav" href="/account/messages">Message
+              {% set new_messages = current_user.new_messages() %}
+              {% if new_messages %}
+              <span class="badge">{{ new_messages }}</span>
+              {% endif %}
+            </a>
+          </li>
+          {% endif %}
+        </ul><br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-dismissible fade show alert-{{ category }}">
+                <button type="button" class="close" data-dismiss='alert'>x</button>
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        {% block body %}
+        
+        {% endblock %}
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      </div>
+    </div>
+  </main>
+
+
+	
+</body>
+</html>

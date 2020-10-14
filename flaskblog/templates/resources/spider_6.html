@@ -1,0 +1,214 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+{% block body %}
+<h1>爬虫系列课程（六）MySQL数据库存储爬虫内容</h1>
+<h2>目录</h2>
+<ul>
+<li><a href="#1">用SQL语句进行数据库创建</a></li>
+<li><a href="#2">用sqlalchemy进行数据库操作</a></li>
+</ul>
+<p>本节内容将助你掌握：</p>
+<ul>
+<li>关于创建数据库，表的SQL语句。</li>
+<li>Navicat 和 sqlalchemy 的基本应用。</li>
+</ul>
+<p>话不多说，上车！</p><br>
+<h2 id="1">用SQL语句进行数据库创建</h2>
+<p>首先我们在控制命令行中登陆 MySQL：</p>
+<pre><code class="language-sql">
+C:\Users\admin&gt;mysql -u root -p
+Enter password: ********
+...
+mysql&gt;
+
+</code></pre>
+<p>输入用户名和密码，现在先看看我们的数据库</p>
+<pre><code class="language-sql">
+mysql&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| blog               |
+| blog_copy 1        |
+| information_schema |
+| lagou              |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| test               |
+| world              |
++--------------------+
+10 rows in set (0.00 sec)
+
+</code></pre>
+<p>大家可以看到我们上节创建的数据库 test。现在我们来建个新的：</p>
+<pre><code class="SQL sql">
+mysql&gt; CREATE DATABASE IF NOT EXISTS temp default charset utf8 collate utf8_general_ci;
+Query OK, 1 row affected, 2 warnings (0.01 sec)
+
+mysql&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| blog               |
+| blog_copy 1        |
+| information_schema |
+| lagou              |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| temp               |
+| test               |
+| world              |
++--------------------+
+11 rows in set (0.00 sec)
+
+</code></pre>
+<p>这个语句很好理解，如果不存在，创建名为test的数据库，设置字符集为utf-8，排序方式 utf8_general_ci，当然你也可以只是 create database ...；</p>
+<p>下面我们来看一下数据库的删除操作：</p>
+<pre><code class="SQL sql">
+mysql&gt; drop database temp;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| blog               |
+| blog_copy 1        |
+| information_schema |
+| lagou              |
+| mysql              |
+| performance_schema |
+| sakila             |
+| sys                |
+| test               |
+| world              |
++--------------------+
+10 rows in set (0.00 sec)
+
+</code></pre>
+<p>删除成功，下面就要进入数据库内的操作了，选择test数据库创建一张表：</p>
+<pre><code class="SQL sql">
+mysql&gt; use test;
+Database changed
+mysql&gt; CREATE TABLE scores(
+    -&gt; id int primary key auto_increment,
+    -&gt; name varchar(20),
+    -&gt; chinese double(5,2),
+    -&gt; english double(5,2),
+    -&gt; math double(5,2)
+    -&gt; );
+Query OK, 0 rows affected, 3 warnings (0.08 sec)
+
+mysql&gt; show tables;
++----------------+
+| Tables_in_test |
++----------------+
+| douban movie   |
+| scores         |
++----------------+
+2 rows in set (0.00 sec)
+
+</code></pre>
+<p>我们看到了我们上节用python创建的表：douban movie 和这节课用 SQL 语句创建的表：scores。</p>
+<p>相信大家已经掌握了用 SQL 语句创建，删除数据库，表的操作了，因为这是爬虫课程，我不往下深入，如果大家感兴趣可以去系统学习一下 SQL 语句。下面我们来看一下用 python 的 sqlalchemy 进行数据操作。</p><br>
+<h2 id="2">用sqlalchemy进行数据库操作</h2>
+<p>俗话说增删查改，我们先来看增。</p>
+<p>增：</p>
+<pre><code class="python">
+movie1 = Movie(name='movie1',rank=1)
+movie2 = Movie(name='movie2',rank=2)
+session.add(movie1)
+session.add(movie2)
+session.commit()
+
+</code></pre>
+<p>或者：</p>
+<pre><code class="python">
+session.add_all([movie1,movie2])
+session.commit()
+
+</code></pre>
+<p>显然，add 或者 add_all 方法把刚刚创建的 movie1 加入到数据库中，而 commit 方法把我们的之前所有未保存的 session 操作保存。</p>
+<p>如果我们想把未保存的操作撤回：</p>
+<pre><code class="python">
+session.rollback()
+
+</code></pre>
+<p>让我们看看数据库中：</p>
+<br><img src="{{ url_for('static', filename='images/spider/6.1.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>成功了！</p>
+<p>查：</p>
+<pre><code class="python">
+print(session.query(Movie).all())
+# [&lt;Movie(movie1|None'|score:None)&gt;, &lt;Movie(movie2|None'|score:None)&gt;]
+
+</code></pre>
+<p>query(Movie) 指在 Movie 类创建的表中查找数据，all()代表符合函数的所有数据，如果我们想找符合一定条件的数据呢？</p>
+<pre><code class="python">
+print(session.query(Movie).filter_by(name='movie1').all())
+# [&lt;Movie(movie1|None'|score:None)&gt;]
+
+</code></pre>
+<p>在设置参数的时候可以加上不止一个参数，用逗号连接即可。</p>
+<p>在很多情况我们通常只需要符合条件的第一个：</p>
+<pre><code class="python">
+print(session.query(Movie).first())
+# [&lt;Movie(movie1|None'|score:None)&gt;]
+
+</code></pre>
+<p>查方面我们还有更强大的 filter ，可以对输出结果排序的 order 和 order_by，我们先略过，对于我们的爬虫来说现在暂时已经够用了。</p>
+<p>再看看删：</p>
+<pre><code class="python">
+movie1 = session.query(Movie).filter_by(name='movie1').first()
+session.delete(movie1)
+
+</code></pre>
+<p>改：</p>
+<pre><code class="python">
+movie1 = session.query(Movie).filter_by(name='movie2').first()
+movie1.name = 'movie3'
+session.commit()
+
+</code></pre>
+<p>看看删改的结果：</p>
+<br><img src="{{ url_for('static', filename='images/spider/6.2.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>操作成功，终于可以将我们的爬虫内容存入数据库了！在原代码的print语句后加上：</p>
+<pre><code class="python">
+new_movie = Movie(
+    name=movie_name,
+    director=movie_drt,
+    actors=movie_act,
+    index=movie_index,
+    score=movie_score,
+    rank=movie_rank,
+    intro=movie_intro
+)
+
+session.add(new_movie)
+session.commit()
+
+</code></pre>
+<p>走起！</p>
+<br><img src="{{ url_for('static', filename='images/spider/6.3.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>大功告成！爬虫第三步我们已经初步掌握！</p>
+<hr>
+<p>推荐资料：</p>
+<ul>
+<li><a href="https://docs.sqlalchemy.org/en/13/">sqlalchemy官方文档</a></li>
+</ul>
+<hr>
+<p>我们的爬虫系列课程第六节结束了，在下一节中我将带大家进行第二次爬虫实战，爬取妹子网图片。如果你喜欢本系列课程，可以关注下方微信公众号，或者来我的博客：<a href="www.ivblog.tech">www.ivblog.tech </a>我会分享一些其他方面的文章。</p>
+</div>
+</div>
+</div>
+{% endblock %}

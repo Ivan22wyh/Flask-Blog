@@ -1,0 +1,95 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+{% if title == 'Request Reset' %}
+<div class="row">
+  <div class="jumbotron pl-3 pr-5 py-2 m-0">
+    <form method="POST" action="">
+      {{ form.hidden_tag() }}
+          <fieldset class="form-group m-10 p-10">
+              <legend class="boder-bottom mb-0">Request Reset Password</legend>
+              <div class="form-group my-0">
+                  {{ form.email.label(class="form-control-label p-0 m-0") }}
+                  {% if form.email.errors %}
+                    {{ form.email(class="form-control form-control-sm is-invalid") }}
+                      <div class="invalid-feedback">
+                        {% for error in form.email.errors %}
+                          <span>{{ error }}</span>
+                        {% endfor %}
+                      </div>
+                  {% else %}
+                    {{ form.email(class="form-control form-control-sm p-10 m-10") }}
+                  {% endif %}
+              </div>
+          </fieldset>
+          <div class="form-group p-0 m-0">
+              {{ form.submit(class="btn btn-sm btn-outline-info ") }}
+          </div> 
+      </form>
+      <div class="border-top pt-3">
+          <small class="text-muted">
+              Have not got an account? <a class="ml2" href="{{ url_for('main.register') }}"> Create one </a>
+          </small>
+      </div>
+      </div>
+  </div>
+{% elif title == 'Reset' %}
+
+<div class="row">
+  <div class="jumbotron pl-3 pr-5 py-2 m-0">
+    <form method="POST" action="">
+      {{ form.hidden_tag() }}
+          <fieldset class="form-group m-10 p-10">
+              <legend class="boder-bottom mb-0">Request Reset Password</legend>
+              <div class="form-group my-0">
+                  {{ form.password.label(class="form-control-label p-0 m-0") }}
+                  {% if form.password.errors %}
+                    {{ form.password(class="form-control form-control-sm is-invalid") }}
+                      <div class="invalid-feedback">
+                        {% for error in form.password.errors %}
+                          <span>{{ error }}</span>
+                        {% endfor %}
+                      </div>
+                  {% else %}
+                    {{ form.password(class="form-control form-control-sm p-10 m-10") }}
+                  {% endif %}
+              </div>
+              <div class="form-group my-0">
+                  {{ form.confirm_password.label(class="form-control-label p-0 m-0") }}
+                  {% if form.confirm_password.errors %}
+                    {{ form.confirm_password(class="form-control form-control-sm is-invalid") }}
+                      <div class="invalid-feedback">
+                        {% for error in form.confirm_password.errors %}
+                          <span>{{ error }}</span>
+                        {% endfor %}
+                      </div>
+                  {% else %}
+                    {{ form.confirm_password(class="form-control form-control-sm p-10 m-10") }}
+                  {% endif %}
+              </div> 
+          </fieldset>
+          <div class="form-group p-0 m-0">
+              {{ form.submit(class="btn btn-sm btn-outline-info ") }}
+          </div> 
+      </form>
+      <div class="border-top pt-3">
+          <small class="text-muted">
+              Have not got an account? <a class="ml2" href="{{ url_for('main.register') }}"> Create one </a>
+          </small>
+      </div>
+      </div>
+  </div>
+
+
+{% endif %}
+
+
+
+
+    
+
+{% endblock %}

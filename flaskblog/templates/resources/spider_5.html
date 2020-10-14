@@ -1,0 +1,161 @@
+{% extends 'Base.html'%}
+
+{% block head %}
+<style>
+  body {background: #F5F5F5 center top;
+}
+</style> 
+{% endblock %}
+
+{% block body %}
+<div class="row">
+<div class="container bg-light">
+<h1>爬虫系列课程（五）爬取数据的本地存储</h1>
+<h2>目录</h2>
+<ul>
+<li><a href="#1">文档存储</a></li>
+<li><a href="#2">xlsx文件存储</a></li>
+<li><a href="*3">MySQL数据库操作</a></li>
+</ul>
+<p>本节内容将助你掌握：</p>
+<ul>
+<li>将爬取内容存储在txt文档中。</li>
+<li>将爬取内容存储在xlsx文件中。</li>
+<li>能够在MySQL数据库中创建表。</li>
+</ul>
+<p><em>本节内容会涉及到python面对对象编程的基本知识，如果对本节的一些语句不太了解可以去翻看一下python的面对对象编程。</em></p>
+<p>话不多说，上车！</p><br>
+<h2 id="1">文档存储</h2>
+<p>这个相信大家多少都有涉猎，我们也就简单提一提。</p>
+<p>在print语句后加上</p>
+<pre><code class="python">
+with open('豆瓣电影TOP250.txt', 'a', encoding='utf-8') as f:
+    f.write('{}|{}|{}|{}|{}|{}|{}'.format(movie_name, movie_drt, movie_act, movie_index, movie_score, movie_rank, movie_intro))
+
+</code></pre>
+<p>with 是创建一个会话环境，当这个环境内的代码执行完成后会自动关闭文件，相对直接的 open 语句便捷很多；a 指定我们对文件的操作权限，给大家整张图看一下：</p>
+<br><img src="{{ url_for('static', filename='images/spider/5.2.PNG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>翻译一下：</p>
+<ul>
+<li>只读：r</li>
+<li>只写：
+<ul>
+<li>覆盖原文：w</li>
+<li>从原文的末尾开始写入：a</li>
+</ul>
+</li>
+<li>读写：
+<ul>
+<li>覆盖原文：w+</li>
+<li>从原文的开始写入：r+</li>
+<li>从原文的末尾写入：a+</li>
+</ul>
+</li>
+</ul>
+<p>大家自己在进行爬虫时可以按需使用。</p>
+<p>我们看下效果：</p>
+<br><img src="{{ url_for('static', filename='images/spider/5.1.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>完美！这就是我们最简单的一种存储方式，接下来我们看看怎么用 Excel 存储我们爬取下来的内容。</p><br>
+<h2 id="2">xlsx 文件存储</h2>
+<p>首先我们用 pip 安装 python 操作 excel 的库 xlwt，然后在我们爬取的 for 循环周围加上这样的代码：</p>
+<pre><code class="python">
+book=xlwt.Workbook(encoding='utf-8',style_compression=0)
+sheet=book.add_sheet('豆瓣电影TOP250',cell_overwrite_ok=True)
+sheet.write(0,0,'名称')
+sheet.write(0,1,'导演')
+sheet.write(0,2,'主演')
+sheet.write(0,3,'分类')
+sheet.write(0,4,'排名')
+sheet.write(0,5,'分数')
+sheet.write(0,6,'简介')
+
+for i in range(0, 250, 25):
+    url = &quot;http://movie.douban.com/top250?start={}&amp;filter=&quot;.format(i)
+    access_page(url)
+
+book.save(u'豆瓣电影TOP250.xls')
+
+</code></pre>
+<p>再开始爬虫前我们先创建一个xlsx文件，设置它的编码方式为 utf-8 ，在这个 xlsx 文件中添加一个 sheet 保存我们的豆瓣电影数据。在这个 sheet 中我们把第0行作为该列数据的名称。for 循环将数据写入后我们需要将这个 xlsx 文件调用 save 方法保存下来。下面来看下数据是怎么写入的：</p>
+<pre><code class="python">
+sheet.write(movie_rank,0,movie_name)
+sheet.write(movie_rank,1,movie_drt)
+sheet.write(movie_rank,2,movie_act)
+sheet.write(movie_rank,3,movie_index)
+sheet.write(movie_rank,4,movie_rank)
+sheet.write(movie_rank,5,movie_score)
+sheet.write(movie_rank,6,movie_intro)
+
+</code></pre>
+<p>我们在print语句后面插入这几行代码，以电影的排名作为行，第0行的数据是表格头，第一行数据是排名第一的电影，没毛病。每一行分别以电影的名称，导演，主演等作为内容写入，让我们看看最后的效果：</p>
+<br><img src="{{ url_for('static', filename='images/spider/5.3.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>最后，让我们来看下怎么用 MySQL 存储数据。</p><br>
+<h2 id="3">MySQL数据库操作</h2>
+<p>首先，我们先得将 MySQL 数据库下载到我们的电脑中：</p>
+<p><a href="https://dev.mysql.com/downloads/installer/">MySQL下载地址</a></p>
+<br><img src="{{ url_for('static', filename='images/spider/5.4.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>选择第二项下载。</p>
+<p>MySQL的安装过程较为繁琐，这里不再赘述，大家可以在网上找一下教程，我推荐一份：</p>
+<p><a href="https://blog.csdn.net/yangwei234/article/details/89028314">MySQL安装教程</a></p>
+<p>安装好后如果大家对SQL语句比较熟悉，能够进行一些增删查改的工作，就可以登录 MySQL 创建一个新的数据库来保存爬取下来的数据。如果对SQL语句不太熟悉建议大家下载一款数据库可视化管理工具，我推荐的是 Navicat Premium，大家可以去官网下载。当然你如果习惯使用 SQL Server 或者 Phpmyadmin 也没关系，这些软件在基础功能上不会有太大的差别。</p>
+<p>下载好后我们新建一个连接，填写 MySQL 账号和密码，MySQL的默认账户是 root。</p>
+<br><img src="{{ url_for('static', filename='images/spider/5.6.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>连接成功以后右键点击连接新建一个数据库，我们将用这个数据库保存我们的数据。</p>
+<p>在 python 段，为了操控我们的数据库，需要安装两个相关库：sqlalchemy, pymysql。sqlalchemy是Python编程语言下的一款开源软件。提供了SQL工具包及对象关系映射（ORM）工具，pymysql 是基于 sqlalchemy 开发的对 MySQL 数据库操作的优化包。简单来说，我们用 sqlalchemy 操纵数据库，用 pymysql 优化我们的使用体验。</p>
+<p>导入我们需要的库:</p>
+<pre><code class="python">
+from sqlalchemy import create_engine, Integer, Float, String, Text, Column
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+
+</code></pre>
+<p>第一步，先建立与数据库的连接：</p>
+<pre><code class="python">
+engine = create_engine(&quot;mysql+pymysql://user:username@localhost:3306/database_name?charset=utf8&quot;, pool_pre_ping=True)
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
+
+</code></pre>
+<p>engine 连接到刚刚创立的数据库，大家在自行填写的时候把user，username，database_name 分别替换成自己的 MySQL账户，密码，用户名mysql+pymysql 代表我们操作的具体方法。localhost是我们的域名，代表本地，大家也改成 127.0.0.1，都是一个意思。3306 是 MySQL端口。charset 是数据库的字符集。</p>
+<p>理解完 engine 我们再来看看 session，session 是我们创建的一个会话，它负责对我们的数据库数据进行具体操作。</p>
+<p>Base 是我们每一个 MySQL 数据表的基类，MySQL 的表本质是一个类，我们创造的每一个类都要从 Base 上继承，才能在 MySQL 数据库中映射成一张表。</p>
+<p>下面我们来创建存储爬取数据的表：</p>
+<pre><code class="python">
+class Movie(Base):
+
+    __tablename__ = 'douban movie'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(Text, nullable=True)
+    director = Column(Text, nullable=True)
+    actors = Column(Text, nullable=True)
+    index = Column(Text, nullable=True)
+    score = Column(Float, nullable=True)
+    rank = Column(Integer, nullable=True)
+    intro = Column(Text, nullable=True)
+
+    def __repr__(self):
+        return &quot;&lt;Movie({}|{}'|score:{})&gt;&quot;.format(self.name, self.actors, self.score)
+
+</code></pre>
+<p>id 是这张表的主键，主键是 MySQL 的对应行数据的身份标识，如果我们要对数据做一个更复杂的关系操作就得依靠主键，我们暂且理解为主键就是一个序号。Column代表 MySQL 数据库中的一列数据，括号内的第一个参数是数据类型，这张表里的类型相信大家都可以猜到，我们常用的还有：String，Datetime等等。后面的参数意义我们可以先略过，如果大家感兴趣可以去翻 sqlalchemy 的文档或者等待我关于数据库操作的专题。</p>
+<p>要将这张表创建在数据库中，我们在 for 循环中加入这两行代码：</p>
+<pre><code class="python">
+Movie.metadata.create_all(engine)
+session = Session()
+
+</code></pre>
+<p>session 是 Session 的实例化，负责操作数据库。我们把代码运行一下：</p>
+<br><img src="{{ url_for('static', filename='images/spider/5.7.JPG ') }}" style="width: 700px;height: 500px;" class="spider" ><br><br>
+<p>创建成功！</p>
+<hr>
+<p>推荐资料：</p>
+<ul>
+<li><a href="https://www.runoob.com/mysql/mysql-tutorial.html">MySQL菜鸟教程</a></li>
+</ul>
+<hr>
+<p>我们的爬虫系列课程第五节结束了，在下一节中我将带大家具体地对数据库中表的数据进行操作和存储。如果你喜欢本系列课程，可以关注下方微信公众号，或者来我的博客：<a href="www.ivblog.tech">www.ivblog.tech </a>我会分享一些其他方面的文章。</p>
+</div>
+</div>
+</div>
+{% endblock %}

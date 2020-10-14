@@ -1,0 +1,233 @@
+body{ 
+	background: url(../images/bg-home-2.jpg) center top;
+	background-attachment: fixed; 
+	background-size:cover;
+}
+
+ul.navbar-nav > li > a{ 
+    font-size: 15px;
+    height: 20px;
+    padding: 0px;
+}
+
+/*.navbar {
+    height: 50px;
+}*/
+
+.navbar-brand {
+    font-size: 20px;
+    position: relative;
+    top: 2px;
+}
+
+.form-control {
+    height: 30px;
+}
+
+.dropdown-menu {
+    width: 150px !important;
+}
+
+.dropdown-item {
+    font-size: 15px;
+}
+
+.hr1 {
+    margin: 0px 0px 0px 0px;
+}
+
+a.title {
+    text-decoration: none;
+    color: black;
+}
+span.title {
+    font-size:20px;
+}
+
+span.account {
+    font-size: 16px;
+}
+
+span.date {
+    font-size: 16px;
+    
+}
+
+span.content {
+    text-decoration: none;
+    color: black;
+    font-size: 16px;
+}
+
+.btn-z {
+    width: 60px;
+    height: 20px;
+}
+
+.fade-in-words{
+    width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+/*自定义一个透明度从0到1的动画，它的名称是fade-in*/
+@keyframes fade-in{  
+    0%{ opacity: 0;}
+    100%{opacity:1;}
+}
+@-webkit-keyframes fade-in{
+    0%{ opacity: 0;}
+    100%{opacity:1;}
+}
+@-ms-keyframes fade-in{
+    0%{ opacity: 0;}
+    100%{opacity:1;}
+}
+@-o-keyframes fade-in{
+    0%{ opacity: 0;}
+    100%{opacity:1;}
+}
+@-moz-keyframes fade-in{
+    0%{ opacity: 0;}
+    100%{opacity:1;}
+}
+.first-words{ 
+    font-size: 100px;
+    position: relative;
+    top: -30px;
+    right: 10px;
+    opacity: 0;      /*实先规定文字的状态是不显示的*/
+    animation: fade-in 4s ease 0s 1;    /*调用名称为fade-in的动画，全程动画显示时间4S，进入方式为ease，延时0S进入，播放次数1次*/
+    -webkit-animation: fade-in 4s ease 0s 1;
+    -moz-animation: fade-in 4s ease 0s 1;
+    -o-animation: fade-in 4s ease 0s 1;
+    -ms-animation: fade-in 4s ease 0s 1;
+    
+    /*规定动画的最后状态为结束状态*/
+    animation-fill-mode:forwards;
+    -webkit-animation-fill-mode: forwards;  
+      -o-animation-fill-mode: forwards; 
+      -ms-animation-fill-mode: forwards;   
+      -moz-animation-fill-mode: forwards; 
+}
+.second-words{ 
+    font-size: 20px;
+    position: relative;
+    top: -40px;
+    right: 10px;
+    opacity: 0;    
+    animation: fade-in 4s ease 2s 1;
+    -webkit-animation: fade-in 4s ease 2s 1;
+    -moz-animation: fade-in 4s ease 2s 1;
+    -o-animation: fade-in 4s ease 2s 1;
+    -ms-animation: fade-in 4s ease 2s 1;
+    
+
+    animation-fill-mode:forwards;
+    -webkit-animation-fill-mode: forwards;  
+      -o-animation-fill-mode: forwards; 
+      -ms-animation-fill-mode: forwards;   
+      -moz-animation-fill-mode: forwards; 
+}
+
+.form-control-label {
+    font-size: 15px;
+}
+
+.form-control {
+    width: 300px;
+}
+
+.reg {
+    padding: 10px 80px 10px 20px;
+}
+
+.account-img {
+    height: 110px;
+    width: 110px;
+    position: relative;
+    top: 10px;
+}
+
+.account-heading {
+    position: relative;
+    left: 18px;
+    top: -33px;
+}
+
+.account-email {
+    position: relative;
+    left: 20px;
+    top: -43px;
+}
+
+.account-follow {
+    position: relative;
+    left: 15px;
+    top: -35px;
+}
+
+.my-account-heading {
+    position: relative;
+    left: 15px;
+    top: -20px;
+}
+
+.my-account-email {
+    position: relative;
+    left: 16px;
+    top: -15px;
+}
+
+.account-navbar {
+    position: relative;
+    top: -20px;
+}
+
+.account-nav {
+    text-decoration-color: black;
+    color: black;
+}
+
+.btn-msg {
+    width: 200px !important;
+}
+
+.msg-box {
+    background-color: white;
+    position: relative;
+    top: 30px;
+    border: lightgrey solid thin;
+}
+
+.return, .add-task, .all-task {
+    text-align: center;
+}
+
+.update-task {
+    position: relative;
+    left: 30px;
+}
+
+.task-content, .task-deadline {
+    width: 320px;
+}
+
+.post-title {
+    width: 660px;
+    height: 40px;
+}
+
+.post-content {
+    width: 660px;
+}
+
+.blog-avart {
+    width: 23px;
+    height: 23px;
+    position: relative;
+    top: -3px;
+}
+
+.message-content {
+    width: 450px;
+}
